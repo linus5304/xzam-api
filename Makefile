@@ -61,4 +61,17 @@ watch:
             fi; \
         fi
 
-.PHONY: all build run test clean watch docker-run docker-down itest
+GOOSE_DRIVER=postgres
+GOOSE_DBSTRING=postgres://xzam:password@localhost:5434/xzam?sslmode=disable
+MIGRATION_DIR=internal/database/migrations
+# Migrate
+migrate-create:
+	@goose -dir $(MIGRATION_DIR) $(GOOSE_DRIVER) $(GOOSE_DBSTRING) create $(name) sql
+
+migrate-up:
+	@goose -dir $(MIGRATION_DIR) $(GOOSE_DRIVER) $(GOOSE_DBSTRING) up
+
+migrate-down:
+	@goose -dir $(MIGRATION_DIR) $(GOOSE_DRIVER) $(GOOSE_DBSTRING) down
+
+.PHONY: all build run test clean watch docker-run docker-down itest migrate-create migrate-up migrate-down
